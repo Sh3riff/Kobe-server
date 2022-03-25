@@ -24,7 +24,7 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/user/:email/:displayName/:photoURL', async (req, res) => {
-  const {photoURL, displayName, email} = req.body
+  const {photoURL, displayName, email} = req.params
   try {
     const user = await User.findOne({ email }).lean()
     if(!user){
