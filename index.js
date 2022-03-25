@@ -114,9 +114,8 @@ app.put('/task', async (req, res) => {
 })
 app.get('/kobe', async (req, res) => {
 
+  // calc score
   const calcScore = (user) => {
-    // console.log(user)
-    // return
     if(user.tasks.length === 0){
       return 0
     }
@@ -128,6 +127,7 @@ app.get('/kobe', async (req, res) => {
     })
     return (totalScore / totalDays).toFixed(2)
   }
+  // sort score
   const sortInDescendingOrder = (a, b) => {
       if (a.kobeScore === b.kobeScore) {
           return 0
@@ -159,7 +159,28 @@ app.get('/kobe', async (req, res) => {
       kobeScore: calcScore(user),
     }))
     formatedUser.sort(sortInDescendingOrder)
-    return res.status(200).json(formatedUser)
+    // list position
+    let prevScore = 0
+    let position = 0
+    let prevPosition = 0
+    const listWithposition = formatedUser.map((user, index) => {
+      if (index === 0){
+          prevScore = user.kobeScore
+          position = index + 1
+          prevPosition = index + 1
+      }
+      if (user.kobeScore !== prevScore){
+          prevScore = user.kobeScore
+          position = index + 1
+          prevPosition = index + 1
+      }
+      if(user.kobeScore === prevScore){
+          prevScore = user.kobeScore
+          position = prevPosition
+      }
+      return {...user, position}
+  })
+    return res.status(200).json(listWithposition)
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Server Error' })
