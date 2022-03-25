@@ -154,6 +154,7 @@ app.get('/kobe', async (req, res) => {
     console.log('user 1',allUsers[0]);
     const formatedUser = allUsers.map(user => ({
       name: user.displayName.split(' ')[0],
+      id: user._id,
       photoURL: user.photoURL,
       email: user.email,
       kobeScore: calcScore(user),
