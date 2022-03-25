@@ -25,6 +25,8 @@ app.get('/', async (req, res) => {
 
 app.get('/user/:email/:displayName/:photoURL', async (req, res) => {
   const {photoURL, displayName, email} = req.params
+  // console.log({photoURL, displayName, email})
+  // return
   try {
     const user = await User.findOne({ email }).lean()
     if(!user){
@@ -132,6 +134,7 @@ app.get('/kobe', async (req, res) => {
     const formatedUser = allUsers.map(user => ({
       name: user.displayName.split(' ')[0],
       photoURL: user.photoURL,
+      email: user.email,
       kobeScore: calcScore(user),
     }))
     console.log('allUsers', formatedUser)
