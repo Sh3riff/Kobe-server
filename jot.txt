@@ -1,0 +1,70 @@
+{
+    "email": "sh3riff101@gmail.com",
+    "displayName": "Sheriff Olowolagba",
+    "photoURL": ""
+}
+
+{
+  "_id": "623d6cbdf6d118bb53c0d03e",
+  "displayName": "Sheriff Olowolagba",
+  "email": "sh3riff101@gmail.com",
+  "photoURL": "",
+  "tasks": [
+    {
+      "name": "taskOne",
+      "id": "d07b7f57-5e3d-4145-ac6c-5fd70b32be43",
+      "dateCreated": 1648194150604,
+      "score": 0
+    },
+    {
+      "name": "taskTwo",
+      "id": "a9469e59-f7df-4887-bd51-ab960fd6bd6b",
+      "dateCreated": 1648194169381,
+      "score": 0
+    }
+  ],
+  "dateCreated": "2022-03-25T07:18:21.519Z",
+  "__v": 0
+}
+
+{
+    "email": "test@user.com",
+    "displayName": "Test User",
+    "photoURL": ""
+}
+
+{
+  "_id": "623d6d25f6d118bb53c0d041",
+  "displayName": "Test User",
+  "email": "test@user.com",
+  "photoURL": "",
+  "tasks": [
+    {
+      "name": "taskOne",
+      "id": "eed5e86c-2249-4cd4-9b00-2b732641af15",
+      "dateCreated": 1648194189362,
+      "score": 0
+    },
+    {
+      "name": "taskTwo",
+      "id": "87a9e6a6-915d-4f50-acfc-e1d7d7cd71a9",
+      "dateCreated": 1648194196812,
+      "score": 0
+    }
+  ],
+  "dateCreated": "2022-03-25T07:20:05.906Z",
+  "__v": 0
+}
+
+[
+  {
+    "name": "Sheriff",
+    "photoURL": "",
+    "kobeScore": "5.00"
+  },
+  {
+    "name": "Test",
+    "photoURL": "",
+    "kobeScore": "2.50"
+  }
+]
