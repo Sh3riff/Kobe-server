@@ -128,6 +128,27 @@ app.get('/kobe', async (req, res) => {
     })
     return (totalScore / totalDays).toFixed(2)
   }
+  const sortInDescendingOrder = (a, b) => {
+      if (a.kobeScore === b.kobeScore) {
+          return 0
+      };
+      const aArr = a.kobeScore.split("."), bArr = b.kobeScore.split(".");
+    for (let i = 0; i < Math.min(aArr.length, bArr.length); i++) {
+        if (parseInt(aArr[i]) > parseInt(bArr[i])) {
+          return -1
+        };
+        if (parseInt(aArr[i]) < parseInt(bArr[i])) {
+          return 1
+        };
+    }
+    if (aArr.length > bArr.length) {
+        return -1
+    };
+    if (aArr.length < bArr.length) {
+        return 1
+    };
+    return 0;
+  };
   try {
     const allUsers = await User.find().lean()
     console.log('user 1',allUsers[0]);
@@ -137,7 +158,7 @@ app.get('/kobe', async (req, res) => {
       email: user.email,
       kobeScore: calcScore(user),
     }))
-    console.log('allUsers', formatedUser)
+    formatedUser.sort(sortInDescendingOrder)
     return res.status(200).json(formatedUser)
   } catch (error) {
     console.log(error)
