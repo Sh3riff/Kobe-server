@@ -117,7 +117,8 @@ app.get('/kobe', async (req, res) => {
   // calc score
   const calcScore = (user) => {
     if(user.tasks.length === 0){
-      return 0
+      let zero = 0;
+      return zero.toFixed()
     }
     let totalScore = 0;
     let totalDays = 0;
