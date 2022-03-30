@@ -93,7 +93,7 @@ app.put('/task', async (req, res) => {
       }
       // not updated today
       const dateCreated = thisTask.dateCreated;
-      const maxPrevScore = today.diff(dateCreated) * 5 - 5; // minus today's score.
+      const maxPrevScore = today.diff(dateCreated) * 5; // minus today's score.
 
       const newScore = maxPrevScore >= thisTask.score ?
         thisTask.score + 5 :
