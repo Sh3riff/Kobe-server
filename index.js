@@ -33,9 +33,21 @@ app.get('/user/:email/:displayName/:photoURL', async (req, res) => {
       const newUser = new User({email, displayName, photoURL, tasks: [], dateCreated: Date.now()})
       const user_ = await newUser.save()
       return res.status(200).json(user_)
-    } else {
+    }  
+    if (user.tasks.length === 0){
       return res.status(200).json(user)
     }
+    const formattedTask = user.tasks.map(task => {
+      if(task.score === 0) {
+        return task
+      } else {
+        const taskDays = dayjs().diff(task.dateCreated, 'day') + 1;
+        const formattedScore = task.score / taskDays;
+        return ({...task, score: formattedScore})
+      }
+    })
+    const formatedUser = {...user, tasks: formattedTask}
+    return res.status(200).json(formatedUser)
   } catch (error) {
     res.status(500).json({ message: 'Server Error' })
   }
@@ -62,14 +74,6 @@ app.post('/task', async (req, res) => {
 })
 
 app.put('/task', async (req, res) => {
-  /**
-   * update user task
-   * check for last updated
-   *  if lastUpdated & today return
-   *  if not lastUpdated add 5
-   *  else calc
-   * 
-   */
     const {taskId, email} = req.body
     try {
       const user = await User.findOne({email}).lean()
@@ -93,9 +97,9 @@ app.put('/task', async (req, res) => {
       }
       // not updated today
       const dateCreated = thisTask.dateCreated;
-      const maxPrevScore = today.diff(dateCreated) * 5; // minus today's score.
+      const maxPrevScore = today.diff(dateCreated, 'day') * 5 + 5; // because a score is expected on the first day & it diff is 0.
 
-      const newScore = maxPrevScore >= thisTask.score ?
+      const newScore = maxPrevScore <= thisTask.score ?
         thisTask.score + 5 :
         maxPrevScore - thisTask.score === 1 ?
         thisTask.score + 6 : 
