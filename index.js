@@ -39,15 +39,18 @@ app.get('/user/:email/:displayName/:photoURL', async (req, res) => {
     }
     const formattedTask = user.tasks.map(task => {
       if(task.score === 0) {
-        return task
+        return ({...task, updatedToday: false})
       } else {
-        const taskDays = dayjs().diff(task.dateCreated, 'day') + 1;
-        const formattedScore = task.score / taskDays;
-        return ({...task, score: formattedScore})
+        const daysLastUpdated = dayjs().diff(task.dateCreated, 'day');
+        const formattedScore = task.score / (daysLastUpdated + 1);
+        return ({
+          ...task,
+          score: formattedScore,
+          updatedToday: daysLastUpdated === 0 ? true : false,
+        })
       }
     })
-    const formatedUser = {...user, tasks: formattedTask}
-    return res.status(200).json(formatedUser)
+    return res.status(200).json({...user, tasks: formattedTask})
   } catch (error) {
     res.status(500).json({ message: 'Server Error' })
   }
@@ -81,9 +84,11 @@ app.put('/task', async (req, res) => {
       const thisTask = user.tasks.find(task => task.id === taskId);
       // never updated
       if(!thisTask?.lastUpdated){
+        const daysLastUpdated = dayjs().diff(task.dateCreated, 'day');
+        const newScore = daysLastUpdated === 0 ? 5 : 7;
         const updatedTask = await User.findOneAndUpdate(
           {email, 'tasks.id': taskId},
-          { $set: { 'tasks.$.score': 5, 'tasks.$.lastUpdated': Date.now()} },
+          { $set: { 'tasks.$.score': newScore, 'tasks.$.lastUpdated': Date.now()} },
           { new: true }
         ).lean()
         return res.status(200).json(updatedTask)
@@ -91,15 +96,17 @@ app.put('/task', async (req, res) => {
       // updated today
       const today = dayjs();
       const taskLastUpdated = dayjs(thisTask.lastUpdated);
-      const updatedToday = today.diff(taskLastUpdated, 'day') == 0 ? true : false;
+      const updatedToday = today.diff(taskLastUpdated, 'day') === 0 ? true : false;
       if(updatedToday){
         return res.status(200).json({})
       }
       // not updated today
       const dateCreated = thisTask.dateCreated;
-      const maxPrevScore = today.diff(dateCreated, 'day') * 5 + 5; // because a score is expected on the first day & it diff is 0.
 
-      const newScore = maxPrevScore <= thisTask.score ?
+      // do not worry about day 0, it would be handled @ !lastUpdated.
+      const maxPrevScore = today.diff(dateCreated, 'day') * 5;
+
+      const newScore = maxPrevScore === thisTask.score ?
         thisTask.score + 5 :
         maxPrevScore - thisTask.score === 1 ?
         thisTask.score + 6 : 
@@ -156,7 +163,6 @@ app.get('/kobe', async (req, res) => {
   };
   try {
     const allUsers = await User.find().lean()
-    console.log('user 1',allUsers[0]);
     const formatedUser = allUsers.map(user => ({
       name: user.displayName.split(' ')[0],
       id: user._id,
