@@ -25,8 +25,6 @@ app.get('/', async (req, res) => {
 
 app.get('/user/:email/:displayName/:photoURL', async (req, res) => {
   const {photoURL, displayName, email} = req.params
-  // console.log({photoURL, displayName, email})
-  // return
   try {
     const user = await User.findOne({ email }).lean()
     if(!user){
@@ -80,11 +78,10 @@ app.put('/task', async (req, res) => {
     const {taskId, email} = req.body
     try {
       const user = await User.findOne({email}).lean()
-      // find task
       const thisTask = user.tasks.find(task => task.id === taskId);
       // never updated
       if(!thisTask?.lastUpdated){
-        const daysLastUpdated = dayjs().diff(task.dateCreated, 'day');
+        const daysLastUpdated = dayjs().diff(thisTask.dateCreated, 'day');
         const newScore = daysLastUpdated === 0 ? 5 : 7;
         const updatedTask = await User.findOneAndUpdate(
           {email, 'tasks.id': taskId},
@@ -120,6 +117,7 @@ app.put('/task', async (req, res) => {
         return res.status(200).json(updatedTask)
       
     } catch (error) {
+      console.log(error)
       res.status(500).json({ message: 'Server Error' })
     }
 })
